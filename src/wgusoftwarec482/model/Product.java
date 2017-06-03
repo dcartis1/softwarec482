@@ -26,7 +26,6 @@ public class Product {
     private final IntegerProperty inventoryLevel; 
     private final IntegerProperty min;
     private final IntegerProperty max;
-    
     private static int nextId = 1;
     
     public Product(){

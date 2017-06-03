@@ -23,7 +23,8 @@ import wgusoftwarec482.view.AppViewController;
 import wgusoftwarec482.view.AddProductController;
 import wgusoftwarec482.model.Part;
 import wgusoftwarec482.model.Product;
-import wgusoftwarec482.model.Inventory;
+import wgusoftwarec482.model.Inhouse;
+import wgusoftwarec482.model.Outsourced;
 
 
 public class MainApp extends Application {
@@ -31,11 +32,12 @@ public class MainApp extends Application {
     private Stage primaryStage;
     private BorderPane rootLayout;
     
-    private ObservableList<Part> partData = FXCollections.observableArrayList();
+    private ObservableList<Part> allPartData = FXCollections.observableArrayList();
     private ObservableList<Product> productData = FXCollections.observableArrayList();
-
+    
     public MainApp() {
-       // partData.add(new Part(2,"part 1", 10.50, 8, 1, 10));
+        allPartData.add(new Outsourced(0, "product1", 3.33, 10, 1, 10, "kaisersoze"));
+        allPartData.add(new Inhouse(0, "poop", 5.55, 15, 1 , 10, 0));
         productData.add(new Product(0, "poop", 5.55, 15, 1, 10));
         productData.add(new Product(0, "fart", 8.88, 8, 1, 8));
         productData.add(new Product(0, "poop", 10.20, 5, 1, 10));
@@ -43,7 +45,7 @@ public class MainApp extends Application {
     }
 
     public ObservableList<Part> getPartData() {
-        return partData;
+        return allPartData;
     }
     
     public ObservableList<Product> getProductData() {

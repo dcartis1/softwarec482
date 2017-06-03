@@ -112,16 +112,12 @@ public class AppViewController {
      */
     @FXML
     private void initialize() {
-        /*
+        
         // Initialize the part table
         partIdColumn.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
         partNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
         partPriceColumn.setCellValueFactory(cellData -> cellData.getValue().priceProperty().asObject());
         partInventoryLevelColumn.setCellValueFactory(cellData -> cellData.getValue().inventoryLevelProperty().asObject());
-        
-        
-        partMinColumn.setCellValueFactory(cellData -> cellData.getValue().minProperty().asObject());
-        partMaxColumn.setCellValueFactory(cellData -> cellData.getValue().maxProperty().asObject()); */
         
         
         productIdColumn.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
@@ -194,7 +190,7 @@ public class AppViewController {
         this.mainApp = mainApp;
 
         // Add observable list data to the table
-        //partTable.setItems(mainApp.getPartData());
+        partTable.setItems(mainApp.getPartData());
         productTable.setItems(mainApp.getProductData());
     }
     
