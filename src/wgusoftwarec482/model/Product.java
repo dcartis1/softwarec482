@@ -11,6 +11,8 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 
 
@@ -27,6 +29,8 @@ public class Product {
     private final IntegerProperty min;
     private final IntegerProperty max;
     private static int nextId = 1;
+    
+    private ObservableList<Part> associatedPart = FXCollections.observableArrayList();
     
     public Product(){
         this.id = new SimpleIntegerProperty(0);
@@ -127,5 +131,6 @@ public class Product {
         nextId ++;
         return i;
     }
+
 
 }

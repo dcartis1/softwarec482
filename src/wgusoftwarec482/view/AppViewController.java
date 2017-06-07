@@ -5,6 +5,7 @@
  */
 package wgusoftwarec482.view;
 
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -20,6 +21,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import wgusoftwarec482.MainApp;
+import wgusoftwarec482.model.Inhouse;
+import wgusoftwarec482.model.Inventory;
+import wgusoftwarec482.model.Outsourced;
 import wgusoftwarec482.model.Part;
 import wgusoftwarec482.model.Product;
 
@@ -56,12 +60,16 @@ public class AppViewController {
     private TableColumn<Product, Integer> productMaxColumn;
     
     @FXML
-    private TextField searchTextField;
+    private TextField searchProductField;
+    @FXML
+    private TextField searchPartField;
     
-    private ObservableList<Product> searchData = FXCollections.observableArrayList();
+    private ObservableList<Product> searchProduct = FXCollections.observableArrayList();
+    private ObservableList<Part> searchPart = FXCollections.observableArrayList();
 
     // Reference to the main application.
     private MainApp mainApp;
+    private Inventory inventory;
 
     /**
      * The constructor.
@@ -75,19 +83,55 @@ public class AppViewController {
     @FXML
     private void handleNewProduct() {
     
-    boolean okClicked = mainApp.showAddProductView();
+        boolean okClicked = mainApp.showAddProductView();
+        
     }
     
-    //calls the overloaded showAddProduct method in mainapp for modifying a product
+    @FXML 
+    private void handleNewPart(){
+    
+        boolean okClicked = mainApp.showAddPartView();
+    }
+    
+    //calls the overloaded showAddProduct method in mainapp.
+    //passes the selected object to mainApp so it can then be passed to the AddProductController.
+    //the Id of the object is passed along as well for updating purposes in the allPartData arraylist.
     @FXML
     private void handleModifyProduct() {
     
         Product selectedProduct = productTable.getSelectionModel().getSelectedItem();
-        int selectedIndex = productTable.getSelectionModel().getSelectedIndex();
         
         if (selectedProduct != null) {
-            boolean okClicked = mainApp.showAddProductView(selectedProduct, selectedIndex);
+            
+            int selectedId = selectedProduct.idProperty().getValue();
+            boolean okClicked = mainApp.showAddProductView(selectedProduct, selectedId);
+            System.out.println(selectedId);
+        }
+        else {
+            // Nothing selected.
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("No Selection");
+            alert.setHeaderText("No Product Selected");
+            alert.setContentText("Please select a product in the table.");
 
+            alert.showAndWait();
+        }
+    }
+    
+    //calls the overloaded ShowAddPart method in Main app
+    //passes the selected object to mainApp so it can then be passed to the AddPartController.
+    //the Id of the object is passed along as well for updating purposes in the allPartData arraylist
+    @FXML
+    private void handleModifyPart() {
+    
+        Part selectedPart = partTable.getSelectionModel().getSelectedItem();
+        
+        if (selectedPart != null) {
+            
+            int selectedId = selectedPart.idProperty().getValue();
+            boolean okClicked = mainApp.showAddPartView(selectedPart, selectedId);
+            System.out.println(selectedId);
         }
         else {
             // Nothing selected.
@@ -105,6 +149,7 @@ public class AppViewController {
     private void exitApplication(ActionEvent event) {
         System.exit(0);
     }
+   
        
     /**
      * Initializes the controller class. This method is automatically called
@@ -112,7 +157,7 @@ public class AppViewController {
      */
     @FXML
     private void initialize() {
-        
+       
         // Initialize the part table
         partIdColumn.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
         partNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
@@ -123,75 +168,126 @@ public class AppViewController {
         productIdColumn.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
         productNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
         productPriceColumn.setCellValueFactory(cellData -> cellData.getValue().priceProperty().asObject());
-        productInventoryLevelColumn.setCellValueFactory(cellData -> cellData.getValue().inventoryLevelProperty().asObject());     
-
-//        productMinColumn.setCellValueFactory(cellData -> cellData.getValue().minProperty().asObject());
-//        productMaxColumn.setCellValueFactory(cellData -> cellData.getValue().maxProperty().asObject());
+        productInventoryLevelColumn.setCellValueFactory(cellData -> cellData.getValue().inventoryLevelProperty().asObject());
         
-
-        //listens for when search field is cleared, then reloads all products into table and clears search data for new searches
-        searchTextField.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+     
+        //listens for when product search field is cleared, then reloads all products into table and clears search data for new searches
+        searchProductField.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             
             String searchText = newValue;
             if (newValue == null || newValue.isEmpty()) {
-                productTable.setItems(mainApp.getProductData());
-                searchData.clear();
+                productTable.setItems(inventory.getProductData());
+                searchProduct.clear();
+            }
+        });
+        //listens for when part search field is cleared, then reloads all parts into table and clears search data for new searches
+        searchPartField.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            
+            String searchText = newValue;
+            if (newValue == null || newValue.isEmpty()) {
+                partTable.setItems(inventory.getAllPartData());
+                searchPart.clear();
             }
         });
     }
 
     @FXML
-    void SearchTable(ActionEvent event) {
+    void SearchProduct(ActionEvent event) {
+        searchProduct.clear();
+        String searchItem=searchProductField.getText().toLowerCase();
+        boolean found=false;
+        try{
+            int itemNumber = Integer.parseInt(searchItem);
+            for(Product p: inventory.getProductData()){
+                if(p.getId()==itemNumber){
+                    found=true;
+                    searchProduct.add(p);
+                    productTable.setItems(searchProduct);
+                }
+            }
+                if (found==false){
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Information Dialog");
+                alert.setHeaderText("Error!");
+                alert.setContentText("Product not found");
 
-    String searchItem=searchTextField.getText();
-    boolean found=false;
-    try{
-        int itemNumber = Integer.parseInt(searchItem);
-        for(Product p: mainApp.getProductData()){
-            if(p.getId()==itemNumber){
-                found=true;
-                searchData.add(p);            
-                productTable.setItems(searchData);         
-            }       
+                alert.showAndWait();
+            }
         }
-            if (found==false){
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Information Dialog");
-            alert.setHeaderText("Error!");
-            alert.setContentText("Product not found");
+        catch(NumberFormatException e){
+            for(Product p: inventory.getProductData()){
+                if(p.getName().toLowerCase().equals(searchItem)){
+                    found=true;
+                    searchProduct.add(p);
+                    productTable.setItems(searchProduct);
+                }        
+            }
+                if (found==false){
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Information Dialog");
+                alert.setHeaderText("Error");
+                alert.setContentText("Product not found");
 
-            alert.showAndWait();
+                alert.showAndWait();
+            }
         }
     }
-    catch(NumberFormatException e){
-        for(Product p: mainApp.getProductData()){
-            if(p.getName().equals(searchItem)){
-                found=true;
-                searchData.add(p);
-                productTable.setItems(searchData);
-            }        
-        }
-            if (found==false){
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Information Dialog");
-            alert.setHeaderText("Error");
-            alert.setContentText("Product not found");
+    
+    @FXML
+    void SearchPart(ActionEvent event) {
+        searchPart.clear();
+        String searchItem=searchPartField.getText().toLowerCase();
+        boolean found=false;
+        try{
+            int itemNumber = Integer.parseInt(searchItem);
+            for(Part p: inventory.getAllPartData()){
+                if(p.getId()==itemNumber){
+                    found=true;
+                    searchPart.add(p);            
+                    partTable.setItems(searchPart);         
+                }
+            }
+                if (found==false){
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Information Dialog");
+                alert.setHeaderText("Error!");
+                alert.setContentText("Product not found");
 
-            alert.showAndWait();
+                alert.showAndWait();
+            }
         }
-    }}
+        catch(NumberFormatException e){
+            for(Part p: inventory.getAllPartData()){
+                if(p.getName().toLowerCase().equals(searchItem)){
+                    found=true;
+                    searchPart.add(p);
+                    partTable.setItems(searchPart);
+                }        
+            }
+                if (found==false){
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Information Dialog");
+                alert.setHeaderText("Error");
+                alert.setContentText("Product not found");
+
+                alert.showAndWait();
+            }
+        }
+    }
 
     /**
      * Is called by the main application to give a reference back to itself.
      * 
      * @param mainApp
+     * @param inventory
      */
-    public void setMainApp(MainApp mainApp) {
+    public void setMainApp(MainApp mainApp, Inventory inventory) {
         this.mainApp = mainApp;
-
-        // Add observable list data to the table
-        partTable.setItems(mainApp.getPartData());
-        productTable.setItems(mainApp.getProductData());
+        this.inventory = inventory;
+        
+        partTable.setItems(inventory.getAllPartData());
+        productTable.setItems(inventory.getProductData());
+   
     }
     
 }

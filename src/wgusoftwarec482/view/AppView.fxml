@@ -20,14 +20,14 @@
       </TableView>
       <ButtonBar layoutX="151.0" layoutY="350.0" prefHeight="42.0" prefWidth="314.0">
         <buttons>
-          <Button fx:id="partAddBtn" mnemonicParsing="false" prefHeight="42.0" prefWidth="94.0" text="Add" />
-            <Button fx:id="partModifyBtn" mnemonicParsing="false" text="Modify" />
+          <Button fx:id="partAddBtn" mnemonicParsing="false" onAction="#handleNewPart" prefHeight="42.0" prefWidth="94.0" text="Add" />
+            <Button fx:id="partModifyBtn" mnemonicParsing="false" onAction="#handleModifyPart" text="Modify" />
             <Button fx:id="partDeleteBtn" mnemonicParsing="false" text="Delete" />
         </buttons>
       </ButtonBar>
       <Button fx:id="exitBtn" layoutX="903.0" layoutY="444.0" mnemonicParsing="false" onAction="#exitApplication" text="Exit" />
-      <Button fx:id="partSearchBtn" layoutX="151.0" layoutY="108.0" mnemonicParsing="false" text="Search" />
-      <TextField fx:id="partSearchBox" layoutX="253.0" layoutY="108.0" />
+      <Button fx:id="partSearchBtn" layoutX="151.0" layoutY="108.0" mnemonicParsing="false" onAction="#SearchPart" text="Search" />
+      <TextField fx:id="searchPartField" layoutX="253.0" layoutY="108.0" />
       <TableView fx:id="productTable" layoutX="499.0" layoutY="150.0" prefHeight="200.0" prefWidth="487.0">
          <columns>
             <TableColumn fx:id="productIdColumn" prefWidth="78.0" text="Product Id" />
@@ -43,8 +43,8 @@
             <Button fx:id="productDeleteBtn" mnemonicParsing="false" text="Delete" />
          </buttons>
       </ButtonBar>
-      <TextField fx:id="searchTextField" layoutX="749.0" layoutY="108.0" />
-      <Button fx:id="productSearchBtn" layoutX="590.0" layoutY="108.0" mnemonicParsing="false" onAction="#SearchTable" text="Search" />
+      <TextField fx:id="searchProductField" layoutX="749.0" layoutY="108.0" />
+      <Button fx:id="productSearchBtn" layoutX="590.0" layoutY="108.0" mnemonicParsing="false" onAction="#SearchProduct" text="Search" />
       <Label layoutX="45.0" layoutY="45.0" text="Inventory Management System" />
    </children>
 </AnchorPane>

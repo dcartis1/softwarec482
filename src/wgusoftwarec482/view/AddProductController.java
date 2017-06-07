@@ -5,6 +5,7 @@
  */
 package wgusoftwarec482.view;
 
+import javafx.beans.property.IntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -12,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import wgusoftwarec482.MainApp;
+import wgusoftwarec482.model.Inventory;
 import wgusoftwarec482.model.Product;
 
 /**
@@ -41,14 +43,15 @@ public class AddProductController {
     private Product product;
     private final boolean okClicked = false;
     public boolean newProduct;
-    private int selectedIndex;
+    private int selectedId;
+    private Inventory inventory;
 
     @FXML
     private void initialize() {
     }
     
-    public void setIndex(int selectedIndex){
-        this.selectedIndex = selectedIndex;
+    public void setSelectedId(int selectedId){
+        this.selectedId = selectedId;
     }
     
     public void setProduct(Product product) {
@@ -60,7 +63,7 @@ public class AddProductController {
         productInv.setText(Integer.toString(product.getInventoryLevel()));
         productPrice.setText(Double.toString(product.getPrice()));
         productMin.setText(Integer.toString(product.getMin()));
-        productMax.setText(Integer.toString(product.getMax()));   
+        productMax.setText(Integer.toString(product.getMax()));
 
     } else {
         // Product is null, remove all the text.
@@ -74,10 +77,9 @@ public class AddProductController {
 }
     
     @FXML
-    public void addProduct() {
-        //main app sets this to true if add product button is clicked.
+    public void addProductBtn() {
+         //main app sets this to true if add product button is clicked.
         if (newProduct == true){
-        
         product = new Product();
         product.setNewId();
         product.setName(productName.getText());
@@ -86,11 +88,10 @@ public class AddProductController {
         product.setMin(Integer.parseInt(productMin.getText()));
         product.setMax(Integer.parseInt(productMax.getText()));
         
-        mainApp.getProductData().add(product);
+        inventory.addProduct(product);
         dialogStage.close();
         }
         else {
-            
             product = new Product();
             product.setOldId(Integer.parseInt(productId.getText()));
             product.setName(productName.getText());
@@ -99,8 +100,8 @@ public class AddProductController {
             product.setMin(Integer.parseInt(productMin.getText()));
             product.setMax(Integer.parseInt(productMax.getText()));
             
-            mainApp.getProductData().set(selectedIndex, product);
-            dialogStage.close();         
+            inventory.updateProduct(selectedId, product);
+            dialogStage.close();
         }
     }
 
@@ -112,18 +113,14 @@ public class AddProductController {
         return okClicked;
     }
     
-    
-
     @FXML
     private void addProductCancelBtn() {
         dialogStage.close();
     }
 
-
-    
-     public void setMainApp(MainApp mainApp) {
+     public void setMainApp(MainApp mainApp, Inventory inventory) {
         this.mainApp = mainApp;
-
+        this.inventory = inventory;
 }
     
 }

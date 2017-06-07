@@ -8,11 +8,6 @@ package wgusoftwarec482;
 import java.io.IOException;
 
 import javafx.application.Application;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -24,32 +19,22 @@ import wgusoftwarec482.view.AddProductController;
 import wgusoftwarec482.model.Part;
 import wgusoftwarec482.model.Product;
 import wgusoftwarec482.model.Inhouse;
+import wgusoftwarec482.model.Inventory;
 import wgusoftwarec482.model.Outsourced;
+import wgusoftwarec482.view.AddPartController;
 
 
 public class MainApp extends Application {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
-    
-    private ObservableList<Part> allPartData = FXCollections.observableArrayList();
-    private ObservableList<Product> productData = FXCollections.observableArrayList();
-    
-    public MainApp() {
-        allPartData.add(new Outsourced(0, "product1", 3.33, 10, 1, 10, "kaisersoze"));
-        allPartData.add(new Inhouse(0, "poop", 5.55, 15, 1 , 10, 0));
-        productData.add(new Product(0, "poop", 5.55, 15, 1, 10));
-        productData.add(new Product(0, "fart", 8.88, 8, 1, 8));
-        productData.add(new Product(0, "poop", 10.20, 5, 1, 10));
-        productData.add(new Product(0, "product 3", 8.17, 1, 1, 10));
-    }
+    Inventory inventory = new Inventory();
+    Part inhousePart = new Inhouse();
+    Part outsourcedPart = new Outsourced();
 
-    public ObservableList<Part> getPartData() {
-        return allPartData;
-    }
-    
-    public ObservableList<Product> getProductData() {
-        return productData;
+    public MainApp() {
+        
+
     }
     
     @Override
@@ -91,12 +76,13 @@ public class MainApp extends Application {
             loader.setLocation(MainApp.class.getResource("view/AppView.fxml"));
             AnchorPane inventoryOverview = (AnchorPane) loader.load();
 
+
             // Set app overview into the center of root layout.
             rootLayout.setCenter(inventoryOverview);
             
-            // Give the controller access to the main app.
-        AppViewController controller = loader.getController();
-        controller.setMainApp(this);
+            // Give the controller access to the main app
+            AppViewController controller = loader.getController();
+            controller.setMainApp(this, inventory);
         
         } catch (IOException e) {
             e.printStackTrace();
@@ -114,7 +100,7 @@ public class MainApp extends Application {
         
         // Give the controller access to the main app.
         AddProductController controller = loader.getController();
-        controller.setMainApp(this);
+        controller.setMainApp(this, inventory);
         // Create the dialog Stage.
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Add Product");
@@ -139,7 +125,7 @@ public class MainApp extends Application {
 }
     
     //overloaded method called when product modify button clicked
-    public boolean showAddProductView(Product product, int selectedIndex) {
+    public boolean showAddProductView(Product product, int selectedId) {
     try {
         // Load the fxml file and create a new stage for the popup dialog.
         FXMLLoader loader = new FXMLLoader();
@@ -148,7 +134,7 @@ public class MainApp extends Application {
 
         // Create the dialog Stage.
         Stage dialogStage = new Stage();
-        dialogStage.setTitle("Add Product");
+        dialogStage.setTitle("Modify Product");
         dialogStage.initModality(Modality.WINDOW_MODAL);
         dialogStage.initOwner(primaryStage);
         Scene scene = new Scene(page);
@@ -156,14 +142,14 @@ public class MainApp extends Application {
         
         // Give the controller access to the main app.
         AddProductController controller = loader.getController();
-        controller.setMainApp(this);
+        controller.setMainApp(this, inventory);
 
         //set dialog stage into controller
         controller.setDialogStage(dialogStage);
         
         //set selected product and its arraylist index into controller
         controller.setProduct(product);
-        controller.setIndex(selectedIndex);
+        controller.setSelectedId(selectedId);
         
         //tells addproduct controller that user is modifying existing product
         controller.newProduct = false;
@@ -178,6 +164,95 @@ public class MainApp extends Application {
     }
 }
     
+    public boolean showAddPartView() {
+    try {
+        // Load the fxml file and create a new stage for the popup dialog.
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(MainApp.class.getResource("view/AddPart.fxml"));
+        AnchorPane page = (AnchorPane) loader.load();
+
+        
+        // Give the controller access to the main app.
+        AddPartController controller = loader.getController();
+        controller.setMainApp(this, inventory);
+        // Create the dialog Stage.
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle("Add Part");
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        dialogStage.initOwner(primaryStage);
+        Scene scene = new Scene(page);
+        dialogStage.setScene(scene);
+        
+        //set dialog stage into the controller
+        controller.setDialogStage(dialogStage);
+        controller.newPart = true;
+
+
+        // Show the dialog and wait until the user closes it
+        dialogStage.showAndWait();
+        
+        return controller.isOkClicked();
+    } catch (IOException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+    
+    public boolean showAddPartView(Part part, int selectedId) {
+    try {
+        // Load the fxml file and create a new stage for the popup dialog.
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(MainApp.class.getResource("view/AddPart.fxml"));
+        AnchorPane page = (AnchorPane) loader.load();
+
+        // Create the dialog Stage.
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle("Modify Part");
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        dialogStage.initOwner(primaryStage);
+        Scene scene = new Scene(page);
+        dialogStage.setScene(scene);
+        
+        // Give the controller access to the main app.
+        AddPartController controller = loader.getController();
+        controller.setMainApp(this, inventory);
+
+        //set dialog stage into controller
+        controller.setDialogStage(dialogStage);
+        
+        
+        //
+        //determines the subclass instance of the Part that was selected for
+        //modification. It is then explicitly cast back to its specific 
+        //subclass in order to retrieve the machineId OR companyName from
+        //the allPartData arrayList.
+        //
+        if (part instanceof Inhouse){         
+            Inhouse polymorphPart = (Inhouse)part;
+            controller.setPart(polymorphPart);
+            controller.setSelectedId(selectedId);
+        }
+        else{
+            Outsourced polymorphPart = (Outsourced)part;
+            controller.setPart(polymorphPart);
+            controller.setSelectedId(selectedId);
+        }
+        
+        //set selected product and its arraylist index into controller
+        controller.setParts(inhousePart, outsourcedPart);
+        
+        //tells addproduct controller that user is modifying existing product
+        controller.newPart = false;
+        
+        // Show the dialog and wait until the user closes it
+        dialogStage.showAndWait();
+        
+        return controller.isOkClicked();
+    } catch (IOException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
 
     /**
      * Returns the main stage.
