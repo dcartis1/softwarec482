@@ -6,14 +6,19 @@
 package wgusoftwarec482.view;
 
 import javafx.beans.property.IntegerProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import wgusoftwarec482.MainApp;
 import wgusoftwarec482.model.Inventory;
+import wgusoftwarec482.model.Part;
 import wgusoftwarec482.model.Product;
 
 /**
@@ -35,6 +40,29 @@ public class AddProductController {
     private TextField productMin;
     @FXML
     private TextField productMax;
+    
+    @FXML
+    private TableView<Part> allPartsTable;
+    @FXML
+    private TableColumn<Part, Integer> allPartIdColumn;
+    @FXML
+    private TableColumn<Part, String> allPartNameColumn;
+    @FXML
+    private TableColumn<Part, Double> allPartPriceColumn;
+    @FXML
+    private TableColumn<Part, Integer> allPartInventoryLevelColumn;
+    
+    @FXML
+    private TableView<Part> partsInProductTable;
+    @FXML
+    private TableColumn<Part, Integer> partIdColumn;
+    @FXML
+    private TableColumn<Part, String> partNameColumn;
+    @FXML
+    private TableColumn<Part, Double> partPriceColumn;
+    @FXML
+    private TableColumn<Part, Integer> partInventoryLevelColumn;
+   
 
     
     private MainApp mainApp;
@@ -42,20 +70,42 @@ public class AddProductController {
     private Stage dialogStage;
     private Product product;
     private final boolean okClicked = false;
-    public boolean newProduct;
+    private boolean newProduct;
     private int selectedId;
     private Inventory inventory;
+    
+    private int newPartsInArray = 0;
+    private int currentPartsInArraySize;
+    
+    ObservableList<Part> tempPartList = FXCollections.observableArrayList();
 
     @FXML
     private void initialize() {
+        
+        //initalize all part table
+        allPartIdColumn.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
+        allPartNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+        allPartPriceColumn.setCellValueFactory(cellData -> cellData.getValue().priceProperty().asObject());
+        allPartInventoryLevelColumn.setCellValueFactory(cellData -> cellData.getValue().inventoryLevelProperty().asObject());
+        
+        //initialize parts in product table
+        partIdColumn.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
+        partNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+        partPriceColumn.setCellValueFactory(cellData -> cellData.getValue().priceProperty().asObject());
+        partInventoryLevelColumn.setCellValueFactory(cellData -> cellData.getValue().inventoryLevelProperty().asObject());
     }
     
+    public void setNewProduct(boolean newProduct){
+        this.newProduct = newProduct;
+    }
     public void setSelectedId(int selectedId){
         this.selectedId = selectedId;
     }
     
+    
     public void setProduct(Product product) {
-    if (product != null) {
+        
+        if (product != null) {
         
         // Fill the textfields with info from the selected product object.
         productId.setText(Integer.toString(product.getId()));
@@ -64,6 +114,8 @@ public class AddProductController {
         productPrice.setText(Double.toString(product.getPrice()));
         productMin.setText(Integer.toString(product.getMin()));
         productMax.setText(Integer.toString(product.getMax()));
+        
+        partsInProductTable.setItems(product.getPartsInProduct());
 
     } else {
         // Product is null, remove all the text.
@@ -74,13 +126,47 @@ public class AddProductController {
         productMin.setText("");
         productMax.setText("");
     }
-}
+    }
     
     @FXML
-    public void addProductBtn() {
+    public void addPartInProductBtn(){
+        Part selectedPart = allPartsTable.getSelectionModel().getSelectedItem();
+        if (selectedPart != null){
+            newPartsInArray++;
+            product.getPartsInProduct().add(selectedPart);
+            partsInProductTable.setItems(product.getPartsInProduct());
+        }
+        else {//part not selected
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("No Selection");
+            alert.setHeaderText("No Animal is selected");
+            alert.setContentText("Please select an animal from the top table.");
+            alert.showAndWait();
+        }
+    }
+    
+    @FXML
+    public void removePartInProductBtn(){
+       
+        Part selectedPart = partsInProductTable.getSelectionModel().getSelectedItem();
+        if (selectedPart != null){
+            
+            product.removePartInProduct(selectedPart);
+            partsInProductTable.setItems(product.getPartsInProduct());
+        }
+        else {//part not selected
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("No Selection");
+            alert.setHeaderText("No Animal is selected");
+            alert.setContentText("Please select an animal from the top table.");
+            alert.showAndWait();
+        }
+    }
+    
+    @FXML
+    public void saveProductBtn() {
          //main app sets this to true if add product button is clicked.
         if (newProduct == true){
-        product = new Product();
         product.setNewId();
         product.setName(productName.getText());
         product.setInventoryLevel(Integer.parseInt(productInv.getText()));
@@ -92,17 +178,43 @@ public class AddProductController {
         dialogStage.close();
         }
         else {
-            product = new Product();
+            
             product.setOldId(Integer.parseInt(productId.getText()));
             product.setName(productName.getText());
             product.setInventoryLevel(Integer.parseInt(productInv.getText()));
             product.setPrice(Double.parseDouble(productPrice.getText()));
             product.setMin(Integer.parseInt(productMin.getText()));
             product.setMax(Integer.parseInt(productMax.getText()));
-            
             inventory.updateProduct(selectedId, product);
+            
             dialogStage.close();
         }
+
+    }
+    
+    
+    // cancel button inside add/modify product view. handles if user added
+    //parts into the partsInProductArray but then hit cancel instead of save.
+    @FXML
+    public void addProductCancelBtn(){
+        //if new product, do nothing and close dialog
+        if(newProduct == true){
+            dialogStage.close();
+            
+        //if no new parts were added to partsInProductArray, do nothing and
+        //close dialog
+        }else if(newPartsInArray == 0){
+            dialogStage.close();
+        }
+        //removes the last item from the partsInProductArraylist equal to the
+        //number of parts that were added.
+        else{
+            for(int i = newPartsInArray; i > 0; i--){
+                product.getPartsInProduct().remove(product.getPartsInProduct().size()-1);
+            }
+        }
+        dialogStage.close();
+
     }
 
     public void setDialogStage(Stage dialogStage) {
@@ -112,15 +224,13 @@ public class AddProductController {
     public boolean isOkClicked() {
         return okClicked;
     }
-    
-    @FXML
-    private void addProductCancelBtn() {
-        dialogStage.close();
-    }
 
-     public void setMainApp(MainApp mainApp, Inventory inventory) {
+     public void setMainApp(MainApp mainApp, Inventory inventory, Product product) {
         this.mainApp = mainApp;
         this.inventory = inventory;
-}
+        this.product = product;
+        
+        allPartsTable.setItems(inventory.getAllPartData());
+    }
     
 }

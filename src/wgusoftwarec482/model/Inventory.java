@@ -5,7 +5,6 @@
  */
 package wgusoftwarec482.model;
 
-import javafx.beans.property.IntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -19,14 +18,7 @@ import javafx.collections.ObservableList;
 
     public Inventory() {
         this.allPartData = FXCollections.observableArrayList();
-        this.productData = FXCollections.observableArrayList();
-        
-        allPartData.add(new Outsourced(0, "Wood", 10.25, 25, 1, 100, "Lumber Yard"));
-        allPartData.add(new Inhouse(0, "Glass", 5.50, 5, 1, 10, 125));
-        allPartData.add(new Inhouse(0, "Screws", 2.00, 100, 1, 200, 34));
-        productData.add(new Product(0, "Table", 3.33, 10, 1, 10));
-        productData.add(new Product(0, "Door", 3.33, 10, 1, 10));
-        productData.add(new Product(0, "Window", 5, 10, 1, 5));
+        this.productData = FXCollections.observableArrayList();       
     }
 
     public Inventory(ObservableList<Product> productData, ObservableList<Part> allPartData) {
@@ -42,8 +34,9 @@ import javafx.collections.ObservableList;
         return allPartData;
     }
     
+    
     public void addProduct(Product product){
-        this.productData.add(product);
+        productData.add(product);
     }
     
     //loops through arraylist and sets the product with matching id.
@@ -57,8 +50,8 @@ import javafx.collections.ObservableList;
         }
     }
     
-    public void addPart(Part inHouse){
-        this.allPartData.add(inHouse);
+    public void addPart(Part part){
+        allPartData.add(part);
     }
     
     public void updatePart(int selectedId, Part part){

@@ -11,11 +11,12 @@
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/nbproject/build-impl.xml</file>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/model/Product.java</file>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/model/Part.java</file>
-            <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/model/Inventory.java</file>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/model/Outsourced.java</file>
+            <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/model/Inventory.java</file>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/MainApp.java</file>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/view/AddProduct.fxml</file>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/view/AddProductController.java</file>
+            <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/model/PartsInProduct.java</file>
         </group>
     </open-files>
 </project-private>

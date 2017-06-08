@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import static jdk.nashorn.internal.objects.NativeArray.map;
 import wgusoftwarec482.MainApp;
 import wgusoftwarec482.model.Inhouse;
 import wgusoftwarec482.model.Inventory;
@@ -62,18 +63,13 @@ public class AddPartController {
     private boolean inOrOut;
     private Inhouse inhouse;
     private Outsourced outsourced;
-    private Part inhousePart;
-    private Part outsourcedPart;
     
     
     public void setSelectedId(int selectedId){
         this.selectedId = selectedId;
     }
+   
     
-    public void setParts(Part inhousePart, Part outsourcedPart){
-        this.inhousePart = inhousePart;
-        this.outsourcedPart = outsourcedPart;
-    }
     
     public void setPart(Inhouse part) {
         inhouseRadio.setSelected(true);
@@ -132,10 +128,9 @@ public class AddPartController {
             }
         }
         else {
-            if(inOrOut == true){
-                
+            if(inOrOut == true){              
                 inhouse = new Inhouse();
-                inhouse.setNewId();
+                inhouse.setOldId(Integer.parseInt(partId.getText()));
                 inhouse.setName(partName.getText());
                 inhouse.setInventoryLevel(Integer.parseInt(partInv.getText()));
                 inhouse.setPrice(Double.parseDouble(partPrice.getText()));
@@ -147,9 +142,8 @@ public class AddPartController {
                 dialogStage.close();
                 }
             else{
-                outsourcedBtn();
                 outsourced = new Outsourced();
-                outsourced.setNewId();
+                outsourced.setOldId(Integer.parseInt(partId.getText()));
                 outsourced.setName(partName.getText());
                 outsourced.setInventoryLevel(Integer.parseInt(partInv.getText()));
                 outsourced.setPrice(Double.parseDouble(partPrice.getText()));

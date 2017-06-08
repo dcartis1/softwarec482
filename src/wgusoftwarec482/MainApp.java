@@ -28,12 +28,17 @@ public class MainApp extends Application {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
-    Inventory inventory = new Inventory();
-    Part inhousePart = new Inhouse();
-    Part outsourcedPart = new Outsourced();
+    private final Inventory inventory = new Inventory();
+    
 
     public MainApp() {
-        
+        //sample data
+        inventory.addPart(new Outsourced(0, "Wood", 10.25, 25, 1, 100, "Lumber Yard"));
+        inventory.addPart(new Inhouse(0, "Glass", 5.50, 5, 1, 10, 125));
+        inventory.addPart(new Inhouse(0, "Screws", 2.00, 100, 1, 200, 34));
+        inventory.addProduct(new Product(0, "Table", 3.33, 10, 1, 10));
+        inventory.addProduct(new Product(0, "Door", 3.33, 10, 1, 10));
+        inventory.addProduct(new Product(0, "Window", 5, 10, 1, 5));
 
     }
     
@@ -97,10 +102,10 @@ public class MainApp extends Application {
         loader.setLocation(MainApp.class.getResource("view/AddProduct.fxml"));
         AnchorPane page = (AnchorPane) loader.load();
 
-        
+        Product product = new Product();
         // Give the controller access to the main app.
         AddProductController controller = loader.getController();
-        controller.setMainApp(this, inventory);
+        controller.setMainApp(this, inventory, product);
         // Create the dialog Stage.
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Add Product");
@@ -111,8 +116,7 @@ public class MainApp extends Application {
         
         //set dialog stage into the controller
         controller.setDialogStage(dialogStage);
-        controller.newProduct = true;
-
+        controller.setNewProduct(true);
 
         // Show the dialog and wait until the user closes it
         dialogStage.showAndWait();
@@ -142,7 +146,7 @@ public class MainApp extends Application {
         
         // Give the controller access to the main app.
         AddProductController controller = loader.getController();
-        controller.setMainApp(this, inventory);
+        controller.setMainApp(this, inventory, product);
 
         //set dialog stage into controller
         controller.setDialogStage(dialogStage);
@@ -152,7 +156,7 @@ public class MainApp extends Application {
         controller.setSelectedId(selectedId);
         
         //tells addproduct controller that user is modifying existing product
-        controller.newProduct = false;
+        controller.setNewProduct(false);
         
         // Show the dialog and wait until the user closes it
         dialogStage.showAndWait();
@@ -224,10 +228,10 @@ public class MainApp extends Application {
         //
         //determines the subclass instance of the Part that was selected for
         //modification. It is then explicitly cast back to its specific 
-        //subclass in order to retrieve the machineId OR companyName from
-        //the allPartData arrayList.
+        //subclass in order to getMachineId() OR getCompanyName() from the
+        //Inhouse and Outsourced subclasses
         //
-        if (part instanceof Inhouse){         
+        if (part instanceof Inhouse){
             Inhouse polymorphPart = (Inhouse)part;
             controller.setPart(polymorphPart);
             controller.setSelectedId(selectedId);
@@ -236,10 +240,7 @@ public class MainApp extends Application {
             Outsourced polymorphPart = (Outsourced)part;
             controller.setPart(polymorphPart);
             controller.setSelectedId(selectedId);
-        }
-        
-        //set selected product and its arraylist index into controller
-        controller.setParts(inhousePart, outsourcedPart);
+        } 
         
         //tells addproduct controller that user is modifying existing product
         controller.newPart = false;

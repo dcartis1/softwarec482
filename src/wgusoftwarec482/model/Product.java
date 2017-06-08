@@ -5,6 +5,8 @@
  */
 package wgusoftwarec482.model;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -13,8 +15,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
-
 
 /**
  *
@@ -25,12 +25,12 @@ public class Product {
     private final IntegerProperty id;
     private final StringProperty name;
     private final DoubleProperty price;
-    private final IntegerProperty inventoryLevel; 
+    private final IntegerProperty inventoryLevel;
     private final IntegerProperty min;
     private final IntegerProperty max;
     private static int nextId = 1;
     
-    private ObservableList<Part> associatedPart = FXCollections.observableArrayList();
+    private final ObservableList<Part> partsInProduct = FXCollections.observableArrayList();
     
     public Product(){
         this.id = new SimpleIntegerProperty(0);
@@ -38,7 +38,7 @@ public class Product {
         this.price = new SimpleDoubleProperty(0.00);
         this.inventoryLevel = new SimpleIntegerProperty(0);
         this.min = new SimpleIntegerProperty(0);
-        this.max = new SimpleIntegerProperty(0);
+        this.max = new SimpleIntegerProperty(0);   
     }
     
     public Product(int id, String name, double price, int inventoryLevel, int min, int max){      
@@ -49,7 +49,6 @@ public class Product {
         this.min = new SimpleIntegerProperty(min);
         this.max = new SimpleIntegerProperty(max);
     }
-
     
     public int getId(){
         return id.get();
@@ -131,6 +130,16 @@ public class Product {
         nextId ++;
         return i;
     }
-
-
+    
+    public ObservableList<Part> getPartsInProduct(){
+        return partsInProduct;
+    }
+    
+    public void addPartInProduct(Part part){
+        partsInProduct.add(part);
+    }
+    
+    public void removePartInProduct(Part selectedPart){
+        partsInProduct.remove(selectedPart);
+    }
 }
