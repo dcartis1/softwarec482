@@ -6,11 +6,13 @@
 package wgusoftwarec482.view;
 
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -27,6 +29,12 @@ import wgusoftwarec482.model.Product;
  */
 public class AddProductController {
     
+    
+    @FXML
+    private Label addProductLabel;
+    
+    @FXML
+    private TextField searchPartField;
     
     @FXML
     private TextField productId;
@@ -77,7 +85,8 @@ public class AddProductController {
     private int newPartsInArray = 0;
     private int currentPartsInArraySize;
     
-    ObservableList<Part> tempPartList = FXCollections.observableArrayList();
+    //temporary arraylist for storing found parts during a search
+    private final ObservableList<Part> searchPart = FXCollections.observableArrayList();
 
     @FXML
     private void initialize() {
@@ -93,6 +102,16 @@ public class AddProductController {
         partNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
         partPriceColumn.setCellValueFactory(cellData -> cellData.getValue().priceProperty().asObject());
         partInventoryLevelColumn.setCellValueFactory(cellData -> cellData.getValue().inventoryLevelProperty().asObject());
+        
+        //listens for when part search field is cleared, then reloads all parts into table and clears search data for new searches
+        searchPartField.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            
+            String searchText = newValue;
+            if (newValue == null || newValue.isEmpty()) {
+                allPartsTable.setItems(inventory.getAllPartData());
+                searchPart.clear();
+            }
+        });
     }
     
     public void setNewProduct(boolean newProduct){
@@ -106,6 +125,8 @@ public class AddProductController {
     public void setProduct(Product product) {
         
         if (product != null) {
+            
+        this.addProductLabel.setText("Modify Product");
         
         // Fill the textfields with info from the selected product object.
         productId.setText(Integer.toString(product.getId()));
@@ -139,8 +160,8 @@ public class AddProductController {
         else {//part not selected
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("No Selection");
-            alert.setHeaderText("No Animal is selected");
-            alert.setContentText("Please select an animal from the top table.");
+            alert.setHeaderText("No Part is selected");
+            alert.setContentText("Please select a Part from the top table.");
             alert.showAndWait();
         }
     }
@@ -157,8 +178,8 @@ public class AddProductController {
         else {//part not selected
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("No Selection");
-            alert.setHeaderText("No Animal is selected");
-            alert.setContentText("Please select an animal from the top table.");
+            alert.setHeaderText("No Part is selected");
+            alert.setContentText("Please select a Part to remove from the bottom table.");
             alert.showAndWait();
         }
     }
@@ -215,6 +236,50 @@ public class AddProductController {
         }
         dialogStage.close();
 
+    }
+    
+    
+    //allPartsTable search function
+    @FXML
+    void SearchPart(ActionEvent event) {
+        searchPart.clear();
+        String searchItem=searchPartField.getText().toLowerCase();
+        boolean found=false;
+        try{
+            int itemNumber = Integer.parseInt(searchItem);
+            for(Part p: inventory.getAllPartData()){
+                if(p.getId()==itemNumber){
+                    found=true;
+                    searchPart.add(p);            
+                    allPartsTable.setItems(searchPart);         
+                }
+            }
+                if (found==false){
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Search Dialog");
+                alert.setHeaderText("Error!");
+                alert.setContentText("Part not found");
+
+                alert.showAndWait();
+            }
+        }
+        catch(NumberFormatException e){
+            for(Part p: inventory.getAllPartData()){
+                if(p.getName().toLowerCase().equals(searchItem)){
+                    found=true;
+                    searchPart.add(p);
+                    allPartsTable.setItems(searchPart);
+                }        
+            }
+                if (found==false){
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Search Dialog");
+                alert.setHeaderText("Error");
+                alert.setContentText("Part not found");
+
+                alert.showAndWait();
+            }
+        }
     }
 
     public void setDialogStage(Stage dialogStage) {

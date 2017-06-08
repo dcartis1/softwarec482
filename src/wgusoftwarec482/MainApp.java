@@ -30,15 +30,29 @@ public class MainApp extends Application {
     private BorderPane rootLayout;
     private final Inventory inventory = new Inventory();
     
-
+    
+    
+    //sample data for testing purposes
     public MainApp() {
-        //sample data
-        inventory.addPart(new Outsourced(0, "Wood", 10.25, 25, 1, 100, "Lumber Yard"));
-        inventory.addPart(new Inhouse(0, "Glass", 5.50, 5, 1, 10, 125));
-        inventory.addPart(new Inhouse(0, "Screws", 2.00, 100, 1, 200, 34));
-        inventory.addProduct(new Product(0, "Table", 3.33, 10, 1, 10));
-        inventory.addProduct(new Product(0, "Door", 3.33, 10, 1, 10));
-        inventory.addProduct(new Product(0, "Window", 5, 10, 1, 5));
+        //sample parts
+        inventory.addPart(new Inhouse(0, "Wood", 25.00, 25, 1, 100, 125));
+        inventory.addPart(new Outsourced(0, "Glass", 10.00, 5, 1, 10, "Glass Store"));
+        inventory.addPart(new Inhouse(0, "Screws", 2.25, 100, 1, 200, 34));
+        
+        //sample product "table" has "wood" and "screws" parts associated with it
+        inventory.addProduct(new Product(0, "Table", 0, 10, 1, 10));
+        inventory.getProductData().get(0).addPartInProduct(inventory.getAllPartData().get(0));
+        inventory.getProductData().get(0).addPartInProduct(inventory.getAllPartData().get(2));
+        
+        //sample product "door" has "wood" part associated with it
+        inventory.addProduct(new Product(0, "Door", 0, 10, 1, 10));
+        inventory.getProductData().get(1).addPartInProduct(inventory.getAllPartData().get(0));
+        
+        //sample product "window" has "wood" and "glass" parts associated with it
+        inventory.addProduct(new Product(0, "Window", 0, 10, 1, 5));
+        inventory.getProductData().get(2).addPartInProduct(inventory.getAllPartData().get(0));
+        inventory.getProductData().get(2).addPartInProduct(inventory.getAllPartData().get(1));
+        
 
     }
     
