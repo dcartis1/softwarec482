@@ -430,7 +430,7 @@ public class AddPartController {
         }
     }
     //custom checked exception for ensuring inventorylevel is correct
-    public class InventoryLevelWrong extends Exception {
+    class InventoryLevelWrong extends Exception {
         public InventoryLevelWrong() {}
         public InventoryLevelWrong(String message)
         {
@@ -438,7 +438,7 @@ public class AddPartController {
         }
     }
     //custom checked exception for ensuring min max values are correct
-    public class MinMaxWrong extends Exception {
+    class MinMaxWrong extends Exception {
         public MinMaxWrong() {}
         public MinMaxWrong(String message)
         {

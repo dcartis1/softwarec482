@@ -5,8 +5,6 @@
  */
 package wgusoftwarec482.model;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;

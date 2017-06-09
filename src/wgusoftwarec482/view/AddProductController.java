@@ -488,7 +488,7 @@ public class AddProductController {
     }
     
     //custom checked exception for inventorylevel value
-    public class InventoryLevelWrong extends Exception {
+    class InventoryLevelWrong extends Exception {
         public InventoryLevelWrong() {}
         public InventoryLevelWrong(String message)
         {
@@ -496,7 +496,7 @@ public class AddProductController {
         }
     }
     //custom checked exception for min and max values
-    public class MinMaxWrong extends Exception {
+    class MinMaxWrong extends Exception {
         public MinMaxWrong() {}
         public MinMaxWrong(String message)
         {
@@ -504,7 +504,7 @@ public class AddProductController {
         }
     }
     //custom checked exception for ensuring a product always has at least one associated part
-    public class PartNotInProduct extends Exception {
+    class PartNotInProduct extends Exception {
         public PartNotInProduct() {}
         public PartNotInProduct(String message)
         {
@@ -512,7 +512,7 @@ public class AddProductController {
         }
     }
     //custom checked expression for ensuring product price is more than total price of all associated parts
-    public class PriceTooLow extends Exception {
+    class PriceTooLow extends Exception {
         public PriceTooLow() {}
         public PriceTooLow(String message)  
         {
