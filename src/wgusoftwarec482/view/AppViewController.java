@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -175,7 +176,8 @@ public class AppViewController {
             }
         });
     }
-
+    
+    //search product table logic. can search by id or name
     @FXML
     void SearchProduct(ActionEvent event) {
         searchProduct.clear();
@@ -218,6 +220,7 @@ public class AppViewController {
         }
     }
     
+    //search part table logic. can search by id or name
     @FXML
     void SearchPart(ActionEvent event) {
         searchPart.clear();
@@ -275,15 +278,67 @@ public class AppViewController {
    
     }
     
+    
+    //delete product button. alerts user that product has associated parts
+    //and asks if they are sure they want to delete product.
     @FXML 
-    private void deleteProduct(){
+    private void deleteProduct(ActionEvent event){
+        Product selectedProduct = productTable.getSelectionModel().getSelectedItem();
+        if (selectedProduct != null) {
+        //Confirm Delete
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Delete...");
+        alert.setHeaderText("This Product has Parts assigned to it!");
+        alert.setContentText("Are you sure you would like to delete '"+ selectedProduct.getName()+ "' now ? (parts will not be deleted)");        
+        alert.showAndWait()
+            
+                    .filter(response -> response == ButtonType.OK)
+                    .ifPresent(response -> inventory.deleteProduct(selectedProduct));
+
+           
+        //update animals table
+        productTable.setItems(inventory.getProductData());
         
+        } else {
+        // Nothing selected.
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("No Selection");
+        alert.setHeaderText("No Product Selected");
+        alert.setContentText("Please select a Product from the Product Table.");
+
+        alert.showAndWait();
+        }
     }
     
-    @FXML 
-    private void deletePart(){
     
-        boolean okClicked = mainApp.showAddPartView();
+    //delete part button. alerts user before deleting selected part
+    @FXML
+    private void deletePart(ActionEvent event) {
+        Part selectedPart = partTable.getSelectionModel().getSelectedItem();
+        if (selectedPart != null) {
+        //Confirm Delete
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Delete...");
+        alert.setHeaderText("Deleting...");
+        alert.setContentText("Would you like to Part " + selectedPart.getName()+" now ?");        
+        alert.showAndWait()
+            
+                    .filter(response -> response == ButtonType.OK)
+                    .ifPresent(response -> inventory.deletePart(selectedPart));
+
+           
+        //update animals table
+        partTable.setItems(inventory.getAllPartData());
+        
+        } else {
+        // Nothing selected.
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("No Selection");
+        alert.setHeaderText("No Part Selected");
+        alert.setContentText("Please select a Part from the Part Table.");
+
+        alert.showAndWait();
+        }
     }
     
     @FXML

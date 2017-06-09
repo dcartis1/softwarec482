@@ -5,18 +5,17 @@
  */
 package wgusoftwarec482.view;
 
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import wgusoftwarec482.MainApp;
@@ -65,6 +64,7 @@ public class AddProductController {
     @FXML
     private TextField productMax;
     
+    //top parts table, shows all parts
     @FXML
     private TableView<Part> allPartsTable;
     @FXML
@@ -76,6 +76,8 @@ public class AddProductController {
     @FXML
     private TableColumn<Part, Integer> allPartInventoryLevelColumn;
     
+    
+    //bottom parts table. shows associated parts
     @FXML
     private TableView<Part> partsInProductTable;
     @FXML
@@ -90,7 +92,6 @@ public class AddProductController {
 
     
     private MainApp mainApp;
-     
     private Stage dialogStage;
     private Product product;
     private final boolean okClicked = false;
@@ -98,6 +99,10 @@ public class AddProductController {
     private int selectedId;
     private Inventory inventory;
     
+    /*
+    counts how many parts were added to the partsInProduct arraylist. Is used
+    so that we know how many parts to delete when the Cancel button is clicked.
+    */
     private int newPartsInArray = 0;
     
     //temporary arraylist for storing found parts during a search
@@ -129,18 +134,20 @@ public class AddProductController {
         });
     }
     
+    //mainApp tells the controller if user clicked Add or Modify
     public void setNewProduct(boolean newProduct){
         this.newProduct = newProduct;
     }
+    //mainApp passes the Id of the product that was selected for modification
     public void setSelectedId(int selectedId){
         this.selectedId = selectedId;
     }
     
-    
+    //mainApp passes the selected product and then we load its attributes into
+    //the corresponding fields and tables.
     public void setProduct(Product product) {
         
         if (product != null) {
-            
         this.addProductLabel.setText("Modify Product");
         
         // Fill the textfields with info from the selected product object.
@@ -151,19 +158,21 @@ public class AddProductController {
         productMin.setText(Integer.toString(product.getMin()));
         productMax.setText(Integer.toString(product.getMax()));
         
+        // fill bottom parts table with the associated parts
         partsInProductTable.setItems(product.getPartsInProduct());
 
-    } else {
-        // Product is null, remove all the text.
-        productId.setText("");
-        productName.setText("");
-        productInv.setText("");
-        productPrice.setText("");
-        productMin.setText("");
-        productMax.setText("");
-    }
+        } else {
+            // Product is null, remove all the text.
+            productId.setText("");
+            productName.setText("");
+            productInv.setText("");
+            productPrice.setText("");
+            productMin.setText("");
+            productMax.setText("");
+        }
     }
     
+    //Adds parts from the all parts table into the associated parts table
     @FXML
     public void addPartInProductBtn(){
         Part selectedPart = allPartsTable.getSelectionModel().getSelectedItem();
@@ -172,7 +181,7 @@ public class AddProductController {
             product.getPartsInProduct().add(selectedPart);
             partsInProductTable.setItems(product.getPartsInProduct());
         }
-        else {//part not selected
+        else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("No Selection");
             alert.setHeaderText("No Part is selected");
@@ -181,16 +190,15 @@ public class AddProductController {
         }
     }
     
+    //removes parts from the associated parts table.
     @FXML
-    public void removePartInProductBtn(){
-       
+    public void removePartInProductBtn(){ 
         Part selectedPart = partsInProductTable.getSelectionModel().getSelectedItem();
         if (selectedPart != null){
-            
             product.removePartInProduct(selectedPart);
             partsInProductTable.setItems(product.getPartsInProduct());
         }
-        else {//part not selected
+        else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("No Selection");
             alert.setHeaderText("No Part is selected");
@@ -199,23 +207,25 @@ public class AddProductController {
         }
     }
     
-    //save button in the add/modify view
+    //save button in the add/modify product view
     @FXML
     public void saveProductBtn() {
-        //if add button was clicked in mainappview
+        //checks if add button was clicked in appview then this is a new product
         if (newProduct == true){
-            //if user input is valid for a new product
+            //checks if user input is valid for a new product
             if(validateProduct() == true){
-                
-                //if inventory level is not between min and max range, throws exception
+                //checks if inventory level is not between min and max range, throws exception
                 try{
                     checkInventoryLevel(Integer.parseInt(productInv.getText()),
                             Integer.parseInt(productMin.getText()), Integer.parseInt(productMax.getText()));
+                    //checks if min is greater than max or max is less than min, throws exception
                     try{
                         checkMinMax(Integer.parseInt(productMin.getText()), Integer.parseInt(productMax.getText()));
                         try{
+                            //checks if product does not have at least one associated part, throw exception
                             checkPartInProduct();
                             try{
+                                //checks if product price is lower than total price of all associated parts, throws exception
                                 checkProductPrice(Double.parseDouble(productPrice.getText()));
                                 product.setNewId();
                                 product.setName(productName.getText());
@@ -245,16 +255,22 @@ public class AddProductController {
                 }
             }
         }
+        //if modify button was clicked in appview then this is an existing product
         else {
+            //if input is valid
             if(validateProduct() == true){
                 try{
+                    //checks if inventory level is outside of min max range, throws exception
                     checkInventoryLevel(Integer.parseInt(productInv.getText()),
                             Integer.parseInt(productMin.getText()), Integer.parseInt(productMax.getText()));
                     try{
+                        //checks if min is greater than max or max less than min, throws exception
                         checkMinMax(Integer.parseInt(productMin.getText()), Integer.parseInt(productMax.getText()));
                         try{
+                            //checks if product does not have at least one associated part, throws exception
                             checkPartInProduct();
                             try{
+                                //checks if product price is less than total price of all associated parts, throw exception
                                 checkProductPrice(Double.parseDouble(productPrice.getText()));
                                 
                                 product.setOldId(Integer.parseInt(productId.getText()));
@@ -287,9 +303,23 @@ public class AddProductController {
         }
     }
     
-    // cancel button inside add/modify product view. handles if user added
-    //parts into the partsInProductArray but then hit cancel instead of save.
+    //cancel button inside add product view. displays alert telling user
+    //nothing will be saved and will be taken back to main screen
     @FXML
+    public void productCancelBtn(ActionEvent event){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm Cancel");
+        alert.setHeaderText("This Product will not be saved.");
+        alert.setContentText("Are you sure you would like to cancel and go back to"
+                + " main screen without saving this Product?");        
+        alert.showAndWait()
+            
+                    .filter(response -> response == ButtonType.OK)
+                    .ifPresent(response -> addProductCancelBtn());
+    }
+    
+    // handles if user added parts into the associated parts table but then 
+    //hit cancel instead of save. user is warned first.
     public void addProductCancelBtn(){
         //if new product, do nothing and close dialog
         if(newProduct == true){
@@ -310,7 +340,7 @@ public class AddProductController {
         dialogStage.close();
     }
 
-    //allPartsTable search function
+    //allPartsTable search function, allows for searching by id or name
     @FXML
     void SearchPart(ActionEvent event) {
         searchPart.clear();
@@ -353,6 +383,7 @@ public class AddProductController {
         }
     }
     
+    //validates user input. is called before any products are added or modified
     public boolean validateProduct(){
         if(productName.getText() == null || productName.getText().isEmpty()){
             productNameLabel.setTextFill(Color.web("red"));
@@ -415,6 +446,8 @@ public class AddProductController {
         return okClicked;
     }
 
+    //passed to us from main app, gives us access to mainapp and and the correct
+    // instances of inventory and product
     public void setMainApp(MainApp mainApp, Inventory inventory, Product product) {
         this.mainApp = mainApp;
         this.inventory = inventory;
@@ -423,36 +456,38 @@ public class AddProductController {
         allPartsTable.setItems(inventory.getAllPartData());
     }
      
+    //checks if inventory level is between min and max range
     public void checkInventoryLevel(int inventoryLevel, int min, int max) throws InventoryLevelWrong{
         if(inventoryLevel < min || inventoryLevel > max){
             throw new InventoryLevelWrong("Inventory level must be between min and max");
         }
     }
-     
+    //checks if min and less than max and max is more than min
     public void checkMinMax(int min, int max) throws MinMaxWrong{
         if(min > max || max < min){
             throw new MinMaxWrong("Min must be less than Max");
         }
     }
-     
-     public void checkPartInProduct() throws PartNotInProduct{
-        if (product.getPartsInProduct().isEmpty()) {
-            throw new PartNotInProduct("Products must always have at least one part");
+    //checks if product has at least one associated part
+    public void checkPartInProduct() throws PartNotInProduct{
+       if (product.getPartsInProduct().isEmpty()) {
+           throw new PartNotInProduct("Products must always have at least one part");
+       }
+    }
+    //checks if productprice is more than total price of all associated parts 
+    public void checkProductPrice(double productPrice) throws PriceTooLow{
+
+        double totalPartPrice = 0;
+        for(Part p: product.getPartsInProduct()){
+            totalPartPrice = totalPartPrice + p.getPrice();
         }
-     }
-     
-     public void checkProductPrice(double productPrice) throws PriceTooLow{
-         
-         double totalPartPrice = 0;
-         for(Part p: product.getPartsInProduct()){
-             totalPartPrice = totalPartPrice + p.getPrice();
-         }
-         
-         if(productPrice < totalPartPrice){
-             throw new PriceTooLow("Product price must be equal or more than the sum of the added parts");
-         }
-     }
-     
+
+        if(productPrice < totalPartPrice){
+            throw new PriceTooLow("Product price must be equal or more than the sum of the added parts");
+        }
+    }
+    
+    //custom checked exception for inventorylevel value
     public class InventoryLevelWrong extends Exception {
         public InventoryLevelWrong() {}
         public InventoryLevelWrong(String message)
@@ -460,7 +495,7 @@ public class AddProductController {
             super(message);
         }
     }
-    
+    //custom checked exception for min and max values
     public class MinMaxWrong extends Exception {
         public MinMaxWrong() {}
         public MinMaxWrong(String message)
@@ -468,7 +503,7 @@ public class AddProductController {
            super(message);
         }
     }
-    
+    //custom checked exception for ensuring a product always has at least one associated part
     public class PartNotInProduct extends Exception {
         public PartNotInProduct() {}
         public PartNotInProduct(String message)
@@ -476,7 +511,7 @@ public class AddProductController {
            super(message);
         }
     }
-    
+    //custom checked expression for ensuring product price is more than total price of all associated parts
     public class PriceTooLow extends Exception {
         public PriceTooLow() {}
         public PriceTooLow(String message)  
@@ -484,5 +519,4 @@ public class AddProductController {
             super(message);
         }
     }
-    
 }

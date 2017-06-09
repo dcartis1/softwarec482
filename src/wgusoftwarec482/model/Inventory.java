@@ -39,6 +39,10 @@ import javafx.collections.ObservableList;
         productData.add(product);
     }
     
+    public void addPart(Part part){
+        allPartData.add(part);
+    }
+    
     //loops through arraylist and sets the product with matching id.
     public void updateProduct(int selectedId, Product product){
         int i = 0;
@@ -49,11 +53,8 @@ import javafx.collections.ObservableList;
             i++;
         }
     }
-    
-    public void addPart(Part part){
-        allPartData.add(part);
-    }
-    
+
+    //loops through arraylist and sets the part with matching id.
     public void updatePart(int selectedId, Part part){
        int i = 0;
        for(Part p: allPartData){
@@ -63,10 +64,20 @@ import javafx.collections.ObservableList;
            i++;
        }
     }
+
+    public void deleteProduct(Product product) {
+        getProductData().remove(product);
+    }
+    
+    public void deletePart(Part part) {
+        getAllPartData().remove(part);
+    }
     
     //this logic is done in the AddProductController
-    public void lookupProduct(){}
+    public void lookupProduct() {}
+    
     //this logic is done in the AddPartController
-    public void lookupPart(){}
+    public void lookupPart() {}
+   
     
  }

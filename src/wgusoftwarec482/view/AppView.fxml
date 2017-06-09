@@ -27,7 +27,7 @@
       </ButtonBar>
       <Button fx:id="exitBtn" layoutX="980.0" layoutY="544.0" mnemonicParsing="false" onAction="#exitApplication" text="Exit" />
       <Button fx:id="partSearchBtn" layoutX="171.0" layoutY="96.0" mnemonicParsing="false" onAction="#SearchPart" text="Search" />
-      <TextField fx:id="searchPartField" layoutX="259.0" layoutY="96.0" />
+      <TextField fx:id="searchPartField" layoutX="259.0" layoutY="96.0" promptText="search by id or name" />
       <TableView fx:id="productTable" layoutX="549.0" layoutY="150.0" prefHeight="297.0" prefWidth="487.0">
          <columns>
             <TableColumn fx:id="productIdColumn" prefWidth="103.0" text="Product Id" />
@@ -43,7 +43,7 @@
             <Button fx:id="productDeleteBtn" mnemonicParsing="false" onAction="#deleteProduct" text="Delete" />
          </buttons>
       </ButtonBar>
-      <TextField fx:id="searchProductField" layoutX="775.0" layoutY="96.0" />
+      <TextField fx:id="searchProductField" layoutX="775.0" layoutY="96.0" promptText="search by id or name" />
       <Button fx:id="productSearchBtn" layoutX="686.0" layoutY="96.0" mnemonicParsing="false" onAction="#SearchProduct" text="Search" />
       <Label layoutX="14.0" layoutY="14.0" text="Inventory Management System" />
    </children>

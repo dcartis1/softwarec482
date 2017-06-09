@@ -28,9 +28,10 @@ public class MainApp extends Application {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
+    
+    //instantiate inventory here and pass it through the application as needed.
+    //ensures we will always be working with the same instance of inventory.
     private final Inventory inventory = new Inventory();
-    
-    
     
     //sample data for testing purposes
     public MainApp() {
@@ -52,8 +53,6 @@ public class MainApp extends Application {
         inventory.addProduct(new Product(0, "Window", 45, 25, 1, 50));
         inventory.getProductData().get(2).addPartInProduct(inventory.getAllPartData().get(0));
         inventory.getProductData().get(2).addPartInProduct(inventory.getAllPartData().get(1));
-        
-
     }
     
     @Override
@@ -66,17 +65,13 @@ public class MainApp extends Application {
         showInventoryOverview();
     }
 
-    /**
-     * Initializes the root layout.
-     */
+    //initalize root layout
     public void initRootLayout() {
         try {
-            // Load root layout from fxml file.
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
             rootLayout = (BorderPane) loader.load();
 
-            // Show the scene containing the root layout.
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
             primaryStage.show();
@@ -85,21 +80,17 @@ public class MainApp extends Application {
         }
     }
 
-    /**
-     * Shows the inventory overview inside the root layout.
-     */
+    //show application overview in root layout
     public void showInventoryOverview() {
         try {
-            // Load Inventory overview.
+            // Load AppView
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/AppView.fxml"));
             AnchorPane inventoryOverview = (AnchorPane) loader.load();
 
-
-            // Set app overview into the center of root layout.
-            rootLayout.setCenter(inventoryOverview);
-            
-            // Give the controller access to the main app
+            rootLayout.setCenter(inventoryOverview);   
+            //give controller access to mainApp
+            //also passes our instance of Inventory
             AppViewController controller = loader.getController();
             controller.setMainApp(this, inventory);
         
@@ -115,11 +106,13 @@ public class MainApp extends Application {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(MainApp.class.getResource("view/AddProduct.fxml"));
         AnchorPane page = (AnchorPane) loader.load();
-
+        
+        //instantiate product and pass it to the controller
+        //for adding a new product. also pass our instance of inventory
         Product product = new Product();
-        // Give the controller access to the main app.
         AddProductController controller = loader.getController();
         controller.setMainApp(this, inventory, product);
+
         // Create the dialog Stage.
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Add Product");
@@ -130,6 +123,7 @@ public class MainApp extends Application {
         
         //set dialog stage into the controller
         controller.setDialogStage(dialogStage);
+        //tells controller that user is adding a new product
         controller.setNewProduct(true);
 
         // Show the dialog and wait until the user closes it
@@ -142,7 +136,9 @@ public class MainApp extends Application {
     }
 }
     
-    //overloaded method called when product modify button clicked
+    //overloaded show addproducteview method is called when product modify button clicked.
+    //takes the selected product and its productId as parameters and passes them to the
+    //addproduct controller for modification.
     public boolean showAddProductView(Product product, int selectedId) {
     try {
         // Load the fxml file and create a new stage for the popup dialog.
@@ -158,14 +154,16 @@ public class MainApp extends Application {
         Scene scene = new Scene(page);
         dialogStage.setScene(scene);
         
-        // Give the controller access to the main app.
+        // Give the controller access to the main app and, pass our instance
+        //of inventory, and pass the selected product instance
         AddProductController controller = loader.getController();
         controller.setMainApp(this, inventory, product);
 
         //set dialog stage into controller
         controller.setDialogStage(dialogStage);
         
-        //set selected product and its arraylist index into controller
+        //set selected product and its product Id into controller. used for 
+        //modifying the selected product in the productData arraylist
         controller.setProduct(product);
         controller.setSelectedId(selectedId);
         
@@ -181,16 +179,16 @@ public class MainApp extends Application {
         return false;
     }
 }
-    
+    //called when add new part button is clicked
     public boolean showAddPartView() {
     try {
         // Load the fxml file and create a new stage for the popup dialog.
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(MainApp.class.getResource("view/AddPart.fxml"));
         AnchorPane page = (AnchorPane) loader.load();
-
         
-        // Give the controller access to the main app.
+        // Give the controller access to the main app and pass our instance
+        //of inventory
         AddPartController controller = loader.getController();
         controller.setMainApp(this, inventory);
         // Create the dialog Stage.
@@ -203,7 +201,9 @@ public class MainApp extends Application {
         
         //set dialog stage into the controller
         controller.setDialogStage(dialogStage);
-        controller.newPart = true;
+        
+        //tell controller that user is adding a new part
+        controller.setNewPart(true);
 
 
         // Show the dialog and wait until the user closes it
@@ -215,7 +215,10 @@ public class MainApp extends Application {
         return false;
     }
 }
-    
+    /*overloaded method is called when modify part button is clicked. it takes
+    the selected part and its partId as parameters and passes them to the controller
+    for modification
+    */
     public boolean showAddPartView(Part part, int selectedId) {
     try {
         // Load the fxml file and create a new stage for the popup dialog.
@@ -231,19 +234,19 @@ public class MainApp extends Application {
         Scene scene = new Scene(page);
         dialogStage.setScene(scene);
         
-        // Give the controller access to the main app.
+        // Give the controller access to the main app, pass our instance of 
+        //inventory
         AddPartController controller = loader.getController();
         controller.setMainApp(this, inventory);
 
         //set dialog stage into controller
         controller.setDialogStage(dialogStage);
-        
-        
+
         /*
         determines the subclass of the Part instance that was selected for
         modification(Inhouse or Outsourced). It is then explicitly cast back
-        to its specific subclass in order to get getMachineId() OR
-        getCompanyName() from its subclass instance.
+        to its specific subclass in order to get its corresponding getMachineId()
+        OR getCompanyName() from the allPartData arraylist.
         */
         if (part instanceof Inhouse){
             Inhouse polymorphPart = (Inhouse)part;
@@ -255,9 +258,8 @@ public class MainApp extends Application {
             controller.setPart(polymorphPart);
             controller.setSelectedId(selectedId);
         } 
-        
-        //tells addproduct controller that user is modifying existing product
-        controller.newPart = false;
+        //tells addpart controller that user is modifying existing part
+        controller.setNewPart(false);
         
         // Show the dialog and wait until the user closes it
         dialogStage.showAndWait();
@@ -268,7 +270,6 @@ public class MainApp extends Application {
         return false;
     }
 }
-
     /**
      * Returns the main stage.
      * @return
