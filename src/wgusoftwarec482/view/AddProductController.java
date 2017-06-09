@@ -17,6 +17,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import wgusoftwarec482.MainApp;
 import wgusoftwarec482.model.Inventory;
@@ -32,6 +33,21 @@ public class AddProductController {
     
     @FXML
     private Label addProductLabel;
+    
+    @FXML
+    private Label productNameLabel;
+    
+    @FXML
+    private Label productInvLabel;
+    
+    @FXML
+    private Label productPriceLabel;
+    
+    @FXML
+    private Label productMinLabel;
+    
+    @FXML
+    private Label productMaxLabel;
     
     @FXML
     private TextField searchPartField;
@@ -83,7 +99,6 @@ public class AddProductController {
     private Inventory inventory;
     
     private int newPartsInArray = 0;
-    private int currentPartsInArraySize;
     
     //temporary arraylist for storing found parts during a search
     private final ObservableList<Part> searchPart = FXCollections.observableArrayList();
@@ -184,35 +199,93 @@ public class AddProductController {
         }
     }
     
+    //save button in the add/modify view
     @FXML
     public void saveProductBtn() {
-         //main app sets this to true if add product button is clicked.
+        //if add button was clicked in mainappview
         if (newProduct == true){
-        product.setNewId();
-        product.setName(productName.getText());
-        product.setInventoryLevel(Integer.parseInt(productInv.getText()));
-        product.setPrice(Double.parseDouble(productPrice.getText()));
-        product.setMin(Integer.parseInt(productMin.getText()));
-        product.setMax(Integer.parseInt(productMax.getText()));
-        
-        inventory.addProduct(product);
-        dialogStage.close();
+            //if user input is valid for a new product
+            if(validateProduct() == true){
+                
+                //if inventory level is not between min and max range, throws exception
+                try{
+                    checkInventoryLevel(Integer.parseInt(productInv.getText()),
+                            Integer.parseInt(productMin.getText()), Integer.parseInt(productMax.getText()));
+                    try{
+                        checkMinMax(Integer.parseInt(productMin.getText()), Integer.parseInt(productMax.getText()));
+                        try{
+                            checkPartInProduct();
+                            try{
+                                checkProductPrice(Double.parseDouble(productPrice.getText()));
+                                product.setNewId();
+                                product.setName(productName.getText());
+                                product.setInventoryLevel(Integer.parseInt(productInv.getText()));
+                                product.setPrice(Double.parseDouble(productPrice.getText()));
+                                product.setMin(Integer.parseInt(productMin.getText()));
+                                product.setMax(Integer.parseInt(productMax.getText()));
+
+                                inventory.addProduct(product);
+                                dialogStage.close();
+                            }
+                            catch(PriceTooLow e){
+                                e.printStackTrace();
+                            }         
+                        }
+                        catch(PartNotInProduct e){
+                            e.printStackTrace();
+                        }
+                        
+                    }
+                    catch(MinMaxWrong e){
+                       e.printStackTrace();
+                    }
+                }
+                catch(InventoryLevelWrong e){
+                    e.printStackTrace();
+                }
+            }
         }
         else {
-            
-            product.setOldId(Integer.parseInt(productId.getText()));
-            product.setName(productName.getText());
-            product.setInventoryLevel(Integer.parseInt(productInv.getText()));
-            product.setPrice(Double.parseDouble(productPrice.getText()));
-            product.setMin(Integer.parseInt(productMin.getText()));
-            product.setMax(Integer.parseInt(productMax.getText()));
-            inventory.updateProduct(selectedId, product);
-            
-            dialogStage.close();
-        }
+            if(validateProduct() == true){
+                try{
+                    checkInventoryLevel(Integer.parseInt(productInv.getText()),
+                            Integer.parseInt(productMin.getText()), Integer.parseInt(productMax.getText()));
+                    try{
+                        checkMinMax(Integer.parseInt(productMin.getText()), Integer.parseInt(productMax.getText()));
+                        try{
+                            checkPartInProduct();
+                            try{
+                                checkProductPrice(Double.parseDouble(productPrice.getText()));
+                                
+                                product.setOldId(Integer.parseInt(productId.getText()));
+                                product.setName(productName.getText());
+                                product.setInventoryLevel(Integer.parseInt(productInv.getText()));
+                                product.setPrice(Double.parseDouble(productPrice.getText()));
+                                product.setMin(Integer.parseInt(productMin.getText()));
+                                product.setMax(Integer.parseInt(productMax.getText()));
+                                inventory.updateProduct(selectedId, product);
 
+                            dialogStage.close();
+                            }
+                            
+                            catch(PriceTooLow e){
+                                e.printStackTrace();
+                            }
+                        }
+                        catch(PartNotInProduct e){
+                            e.printStackTrace();
+                        }
+                    }
+                    catch(MinMaxWrong e){
+                        e.printStackTrace();
+                    }
+                }
+                catch(InventoryLevelWrong e){
+                    e.printStackTrace();
+                }
+            }
+        }
     }
-    
     
     // cancel button inside add/modify product view. handles if user added
     //parts into the partsInProductArray but then hit cancel instead of save.
@@ -227,18 +300,16 @@ public class AddProductController {
         }else if(newPartsInArray == 0){
             dialogStage.close();
         }
-        //removes the last item from the partsInProductArraylist equal to the
-        //number of parts that were added.
+        //removes the last item from the partsInProductArraylist a number of
+        //times equal to the number of new parts that were added.
         else{
             for(int i = newPartsInArray; i > 0; i--){
                 product.getPartsInProduct().remove(product.getPartsInProduct().size()-1);
             }
         }
         dialogStage.close();
-
     }
-    
-    
+
     //allPartsTable search function
     @FXML
     void SearchPart(ActionEvent event) {
@@ -281,6 +352,60 @@ public class AddProductController {
             }
         }
     }
+    
+    public boolean validateProduct(){
+        if(productName.getText() == null || productName.getText().isEmpty()){
+            productNameLabel.setTextFill(Color.web("red"));
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Input Validation");
+            alert.setHeaderText("Product not valid");
+            alert.setContentText("Product Name cannot be empty");
+
+            alert.showAndWait();
+            return false;
+        }
+        if(!productInv.getText().matches("[0-9]+")){
+            productInvLabel.setTextFill(Color.web("red"));
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Input Validation");
+            alert.setHeaderText("Product not valid");
+            alert.setContentText("Inventory must be a number.");
+
+            alert.showAndWait();
+            return false;
+        }
+        if(!productPrice.getText().matches("^[0-9]+\\.?[0-9]*")){
+            productPriceLabel.setTextFill(Color.web("red"));
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Input Validation");
+            alert.setHeaderText("Product not valid");
+            alert.setContentText("Price must be a number.");
+
+            alert.showAndWait();
+            return false;
+        }
+        if(!productMin.getText().matches("[0-9]+")){
+            productMinLabel.setTextFill(Color.web("red"));
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Input Validation");
+            alert.setHeaderText("Product not valid");
+            alert.setContentText("Min must be a number.");
+
+            alert.showAndWait();
+            return false;
+        }
+        if(!productMax.getText().matches("[0-9]+")){
+            productMaxLabel.setTextFill(Color.web("red"));
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Input Validation");
+            alert.setHeaderText("Product not valid");
+            alert.setContentText("Max must be a number.");
+
+            alert.showAndWait();
+            return false;
+        }
+        return true;
+    }
 
     public void setDialogStage(Stage dialogStage) {
         this.dialogStage = dialogStage;
@@ -290,12 +415,74 @@ public class AddProductController {
         return okClicked;
     }
 
-     public void setMainApp(MainApp mainApp, Inventory inventory, Product product) {
+    public void setMainApp(MainApp mainApp, Inventory inventory, Product product) {
         this.mainApp = mainApp;
         this.inventory = inventory;
         this.product = product;
         
         allPartsTable.setItems(inventory.getAllPartData());
+    }
+     
+    public void checkInventoryLevel(int inventoryLevel, int min, int max) throws InventoryLevelWrong{
+        if(inventoryLevel < min || inventoryLevel > max){
+            throw new InventoryLevelWrong("Inventory level must be between min and max");
+        }
+    }
+     
+    public void checkMinMax(int min, int max) throws MinMaxWrong{
+        if(min > max || max < min){
+            throw new MinMaxWrong("Min must be less than Max");
+        }
+    }
+     
+     public void checkPartInProduct() throws PartNotInProduct{
+        if (product.getPartsInProduct().isEmpty()) {
+            throw new PartNotInProduct("Products must always have at least one part");
+        }
+     }
+     
+     public void checkProductPrice(double productPrice) throws PriceTooLow{
+         
+         double totalPartPrice = 0;
+         for(Part p: product.getPartsInProduct()){
+             totalPartPrice = totalPartPrice + p.getPrice();
+         }
+         
+         if(productPrice < totalPartPrice){
+             throw new PriceTooLow("Product price must be equal or more than the sum of the added parts");
+         }
+     }
+     
+    public class InventoryLevelWrong extends Exception {
+        public InventoryLevelWrong() {}
+        public InventoryLevelWrong(String message)
+        {
+            super(message);
+        }
+    }
+    
+    public class MinMaxWrong extends Exception {
+        public MinMaxWrong() {}
+        public MinMaxWrong(String message)
+        {
+           super(message);
+        }
+    }
+    
+    public class PartNotInProduct extends Exception {
+        public PartNotInProduct() {}
+        public PartNotInProduct(String message)
+        {
+           super(message);
+        }
+    }
+    
+    public class PriceTooLow extends Exception {
+        public PriceTooLow() {}
+        public PriceTooLow(String message)  
+        {
+            super(message);
+        }
     }
     
 }

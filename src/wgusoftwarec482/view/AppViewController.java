@@ -135,12 +135,6 @@ public class AppViewController {
             alert.showAndWait();
         }
     }
-    
-    @FXML
-    private void exitApplication(ActionEvent event) {
-        System.exit(0);
-    }
-   
        
     /**
      * Initializes the controller class. This method is automatically called
@@ -235,7 +229,7 @@ public class AppViewController {
                 if(p.getId()==itemNumber){
                     found=true;
                     searchPart.add(p);            
-                    partTable.setItems(searchPart);         
+                    partTable.setItems(searchPart);
                 }
             }
                 if (found==false){
@@ -279,6 +273,22 @@ public class AppViewController {
         partTable.setItems(inventory.getAllPartData());
         productTable.setItems(inventory.getProductData());
    
+    }
+    
+    @FXML 
+    private void deleteProduct(){
+        
+    }
+    
+    @FXML 
+    private void deletePart(){
+    
+        boolean okClicked = mainApp.showAddPartView();
+    }
+    
+    @FXML
+    private void exitApplication(ActionEvent event) {
+        System.exit(0);
     }
     
 }

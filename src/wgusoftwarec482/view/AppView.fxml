@@ -22,7 +22,7 @@
         <buttons>
           <Button fx:id="partAddBtn" mnemonicParsing="false" onAction="#handleNewPart" prefHeight="42.0" prefWidth="94.0" text="Add" />
             <Button fx:id="partModifyBtn" mnemonicParsing="false" onAction="#handleModifyPart" text="Modify" />
-            <Button fx:id="partDeleteBtn" mnemonicParsing="false" text="Delete" />
+            <Button fx:id="partDeleteBtn" mnemonicParsing="false" onAction="#deletePart" text="Delete" />
         </buttons>
       </ButtonBar>
       <Button fx:id="exitBtn" layoutX="980.0" layoutY="544.0" mnemonicParsing="false" onAction="#exitApplication" text="Exit" />
@@ -40,7 +40,7 @@
          <buttons>
             <Button fx:id="productAddBtn" mnemonicParsing="false" onAction="#handleNewProduct" prefHeight="42.0" prefWidth="94.0" text="Add" />
             <Button fx:id="productModifyBtn" mnemonicParsing="false" onAction="#handleModifyProduct" text="Modify" />
-            <Button fx:id="productDeleteBtn" mnemonicParsing="false" text="Delete" />
+            <Button fx:id="productDeleteBtn" mnemonicParsing="false" onAction="#deleteProduct" text="Delete" />
          </buttons>
       </ButtonBar>
       <TextField fx:id="searchProductField" layoutX="775.0" layoutY="96.0" />

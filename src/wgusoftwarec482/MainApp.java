@@ -40,16 +40,16 @@ public class MainApp extends Application {
         inventory.addPart(new Inhouse(0, "Screws", 2.25, 100, 1, 200, 34));
         
         //sample product "table" has "wood" and "screws" parts associated with it
-        inventory.addProduct(new Product(0, "Table", 0, 10, 1, 10));
+        inventory.addProduct(new Product(0, "Table", 60, 5, 1, 10));
         inventory.getProductData().get(0).addPartInProduct(inventory.getAllPartData().get(0));
         inventory.getProductData().get(0).addPartInProduct(inventory.getAllPartData().get(2));
         
         //sample product "door" has "wood" part associated with it
-        inventory.addProduct(new Product(0, "Door", 0, 10, 1, 10));
+        inventory.addProduct(new Product(0, "Door", 26, 4, 1, 10));
         inventory.getProductData().get(1).addPartInProduct(inventory.getAllPartData().get(0));
         
         //sample product "window" has "wood" and "glass" parts associated with it
-        inventory.addProduct(new Product(0, "Window", 0, 10, 1, 5));
+        inventory.addProduct(new Product(0, "Window", 45, 25, 1, 50));
         inventory.getProductData().get(2).addPartInProduct(inventory.getAllPartData().get(0));
         inventory.getProductData().get(2).addPartInProduct(inventory.getAllPartData().get(1));
         
@@ -239,12 +239,12 @@ public class MainApp extends Application {
         controller.setDialogStage(dialogStage);
         
         
-        //
-        //determines the subclass instance of the Part that was selected for
-        //modification. It is then explicitly cast back to its specific 
-        //subclass in order to getMachineId() OR getCompanyName() from the
-        //Inhouse and Outsourced subclasses
-        //
+        /*
+        determines the subclass of the Part instance that was selected for
+        modification(Inhouse or Outsourced). It is then explicitly cast back
+        to its specific subclass in order to get getMachineId() OR
+        getCompanyName() from its subclass instance.
+        */
         if (part instanceof Inhouse){
             Inhouse polymorphPart = (Inhouse)part;
             controller.setPart(polymorphPart);
