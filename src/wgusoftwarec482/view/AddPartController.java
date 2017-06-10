@@ -19,6 +19,8 @@ import wgusoftwarec482.MainApp;
 import wgusoftwarec482.model.Inhouse;
 import wgusoftwarec482.model.Inventory;
 import wgusoftwarec482.model.Outsourced;
+import wgusoftwarec482.exceptions.InventoryLevelWrong;
+import wgusoftwarec482.exceptions.MinMaxWrong;
 
 
 /**
@@ -427,22 +429,6 @@ public class AddPartController {
     public void checkMinMax(int min, int max) throws MinMaxWrong{
         if(min > max || max < min){
             throw new MinMaxWrong("Min must be less than Max");
-        }
-    }
-    //custom checked exception for ensuring inventorylevel is correct
-    class InventoryLevelWrong extends Exception {
-        public InventoryLevelWrong() {}
-        public InventoryLevelWrong(String message)
-        {
-            super(message);
-        }
-    }
-    //custom checked exception for ensuring min max values are correct
-    class MinMaxWrong extends Exception {
-        public MinMaxWrong() {}
-        public MinMaxWrong(String message)
-        {
-           super(message);
         }
     }
 }
