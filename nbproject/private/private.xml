@@ -5,14 +5,19 @@
         <group>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/view/AppView.fxml</file>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/view/AppViewController.java</file>
+            <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/exceptions/InventoryLevelWrong.java</file>
+            <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/exceptions/NamePriceInventory.java</file>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/model/Inhouse.java</file>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/view/AddPartController.java</file>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/view/AddPart.fxml</file>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/nbproject/build-impl.xml</file>
+            <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/exceptions/PriceTooLow.java</file>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/model/Product.java</file>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/model/Part.java</file>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/model/Outsourced.java</file>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/model/Inventory.java</file>
+            <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/exceptions/PartNotInProduct.java</file>
+            <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/exceptions/MinMaxWrong.java</file>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/MainApp.java</file>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/view/AddProduct.fxml</file>
             <file>file:/C:/Users/Dan/Documents/NetBeansProjects/WGUSoftwareC482/src/wgusoftwarec482/view/AddProductController.java</file>

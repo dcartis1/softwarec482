@@ -139,6 +139,32 @@ public class AddProductController {
                 searchPart.clear();
             }
         });
+        
+        
+        /*
+        Listeners for the product Name, Inventory, and Price text fields. If user clears a text field,
+        set its text property to the default value.
+        */
+         productInv.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            String searchText = newValue;
+            if (newValue == null || newValue.isEmpty()) {
+                productInv.textProperty().setValue("0");
+            }
+        });
+         
+         productPrice.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            String searchText = newValue;
+            if (newValue == null || newValue.isEmpty()) {
+                productPrice.textProperty().setValue("0");
+            }
+        });
+         
+         productName.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            String searchText = newValue;
+            if (newValue == null || newValue.isEmpty()) {
+                productName.textProperty().setValue("name");
+            }
+        });
     }
     
     //mainApp tells the controller if user clicked Add or Modify
@@ -223,10 +249,10 @@ public class AddProductController {
             if(validateProduct() == true){
                 //checks if inventory level is not between min and max range, throws exception
                 try{
+                    checkInventoryLevel(Integer.parseInt(productInv.getText()), Integer.parseInt(productMin.getText()), Integer.parseInt(productMax.getText())); 
                     //checks if product has a Name, Inventory, and Price. throws exception
                     try{
-                        checkNamePriceInventory(productName.getText(), Double.parseDouble(productPrice.getText()), Integer.parseInt(productInv.getText()));
-                        checkInventoryLevel(Integer.parseInt(productInv.getText()), Integer.parseInt(productMin.getText()), Integer.parseInt(productMax.getText()));        
+                        checkNamePriceInventory(productName.getText(), Double.parseDouble(productPrice.getText()), Integer.parseInt(productInv.getText()));       
                         //checks if min is greater than max or max is less than min, throws exception
                         try{
                             checkMinMax(Integer.parseInt(productMin.getText()), Integer.parseInt(productMax.getText()));
@@ -247,24 +273,24 @@ public class AddProductController {
                                     dialogStage.close();
                                 }
                                 catch(PriceTooLow e){
-                                    e.printStackTrace();
+                                    System.out.println(e);
                                 }         
                             }
                             catch(PartNotInProduct e){
-                                e.printStackTrace();
+                                System.out.println(e);
                             }
 
                         }
                         catch(MinMaxWrong e){
-                           e.printStackTrace();
+                           System.out.println(e);
                         }
                     }
                     catch(NamePriceInventory e){
-                        e.printStackTrace();
+                        System.out.println(e);
                     }
                 }
                 catch(InventoryLevelWrong e){
-                    e.printStackTrace();
+                    System.out.println(e);
                 }
             }
         }
@@ -277,40 +303,47 @@ public class AddProductController {
                     checkInventoryLevel(Integer.parseInt(productInv.getText()),
                             Integer.parseInt(productMin.getText()), Integer.parseInt(productMax.getText()));
                     try{
-                        //checks if min is greater than max or max less than min, throws exception
-                        checkMinMax(Integer.parseInt(productMin.getText()), Integer.parseInt(productMax.getText()));
+                        //checks if product has a Name, Inventory, and Price. throws exception
+                        checkNamePriceInventory(productName.getText(), Double.parseDouble(productPrice.getText()), Integer.parseInt(productInv.getText())); 
                         try{
-                            //checks if product does not have at least one associated part, throws exception
-                            checkPartInProduct();
+                            //checks if min is greater than max or max less than min, throws exception
+                            checkMinMax(Integer.parseInt(productMin.getText()), Integer.parseInt(productMax.getText()));
                             try{
-                                //checks if product price is less than total price of all associated parts, throw exception
-                                checkProductPrice(Double.parseDouble(productPrice.getText()));
-                                
-                                product.setOldId(Integer.parseInt(productId.getText()));
-                                product.setName(productName.getText());
-                                product.setInventoryLevel(Integer.parseInt(productInv.getText()));
-                                product.setPrice(Double.parseDouble(productPrice.getText()));
-                                product.setMin(Integer.parseInt(productMin.getText()));
-                                product.setMax(Integer.parseInt(productMax.getText()));
-                                inventory.updateProduct(selectedId, product);
+                                //checks if product does not have at least one associated part, throws exception
+                                checkPartInProduct();
+                                try{
+                                    //checks if product price is less than total price of all associated parts, throw exception
+                                    checkProductPrice(Double.parseDouble(productPrice.getText()));
 
-                            dialogStage.close();
+                                    product.setOldId(Integer.parseInt(productId.getText()));
+                                    product.setName(productName.getText());
+                                    product.setInventoryLevel(Integer.parseInt(productInv.getText()));
+                                    product.setPrice(Double.parseDouble(productPrice.getText()));
+                                    product.setMin(Integer.parseInt(productMin.getText()));
+                                    product.setMax(Integer.parseInt(productMax.getText()));
+                                    inventory.updateProduct(selectedId, product);
+
+                                dialogStage.close();
+                                }
+
+                                catch(PriceTooLow e){
+                                    System.out.println(e);
+                                }
                             }
-                            
-                            catch(PriceTooLow e){
-                                e.printStackTrace();
+                            catch(PartNotInProduct e){
+                                System.out.println(e);
                             }
                         }
-                        catch(PartNotInProduct e){
-                            e.printStackTrace();
+                        catch(MinMaxWrong e){
+                            System.out.println(e);
                         }
                     }
-                    catch(MinMaxWrong e){
-                        e.printStackTrace();
+                    catch(NamePriceInventory e){
+                        System.out.println(e);
                     }
                 }
                 catch(InventoryLevelWrong e){
-                    e.printStackTrace();
+                    System.out.println(e);
                 }
             }
         }

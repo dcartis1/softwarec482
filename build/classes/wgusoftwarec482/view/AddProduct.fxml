@@ -35,7 +35,7 @@
       <TextField fx:id="productPrice" layoutX="135.0" layoutY="363.0" prefHeight="42.0" prefWidth="146.0" promptText="00.00" text="0" />
       <TextField fx:id="productInv" layoutX="135.0" layoutY="293.0" prefHeight="42.0" prefWidth="146.0" promptText="# in inventory" text="0" />
       <TextField fx:id="productMax" layoutX="304.0" layoutY="433.0" prefHeight="42.0" prefWidth="65.0" promptText="max" />
-      <TextField fx:id="productName" layoutX="135.0" layoutY="223.0" prefHeight="42.0" prefWidth="186.0" promptText="name" text="name" />
+      <TextField fx:id="productName" layoutX="135.0" layoutY="223.0" prefHeight="42.0" prefWidth="186.0" promptText="name" />
       <TableView fx:id="partsInProductTable" layoutX="580.0" layoutY="407.0" prefHeight="200.0" prefWidth="600.0">
          <columns>
             <TableColumn fx:id="partIdColumn" prefWidth="134.0" text="Part Id" />

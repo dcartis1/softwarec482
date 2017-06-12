@@ -5,6 +5,8 @@
  */
 package wgusoftwarec482.exceptions;
 
+import javafx.scene.control.Alert;
+
 /**
  *
  * @author Dan
@@ -15,5 +17,12 @@ public class PartNotInProduct extends Exception {
     public PartNotInProduct(String message)
     {
        super(message);
+       
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Exception Error");
+        alert.setHeaderText("Product not valid");
+        alert.setContentText(message);
+
+        alert.showAndWait();
     }
 }

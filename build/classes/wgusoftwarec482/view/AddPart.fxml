@@ -17,7 +17,7 @@
       <RadioButton fx:id="outsourcedRadio" layoutX="270.0" layoutY="42.0" mnemonicParsing="false" onAction="#outsourcedBtn" text="Outsourced" toggleGroup="$partRadioGroup" />
       <TextField fx:id="partId" editable="false" layoutX="111.0" layoutY="110.0" promptText="Auto Gen - Disabled" />
       <TextField fx:id="partName" layoutX="111.0" layoutY="172.0" promptText="name" />
-      <TextField fx:id="partInv" layoutX="111.0" layoutY="229.0" promptText="# in inventory" />
+      <TextField fx:id="partInv" layoutX="111.0" layoutY="229.0" promptText="# in inventory" text="0" />
       <TextField fx:id="partPrice" layoutX="111.0" layoutY="288.0" promptText="00.00" />
       <TextField fx:id="partMax" layoutX="279.0" layoutY="348.0" prefHeight="42.0" prefWidth="74.0" promptText="max" />
       <TextField fx:id="partMin" layoutX="111.0" layoutY="348.0" prefHeight="42.0" prefWidth="74.0" promptText="min" />

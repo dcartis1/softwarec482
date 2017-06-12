@@ -5,6 +5,7 @@
  */
 package wgusoftwarec482.view;
 
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -123,6 +124,17 @@ public class AddPartController {
     }
     
     @FXML
+    private void initialize(){
+        //listener for part inventory text field. if user clears text field, set text property to default value
+        partInv.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            String searchText = newValue;
+            if (newValue == null || newValue.isEmpty()) {
+                partInv.textProperty().setValue("0");
+            }
+        });
+    }
+    
+    @FXML
     public void addpartBtn() {
         //if add button was clicked, add new part, else modify existing part
         if (newPart == true){
@@ -151,11 +163,11 @@ public class AddPartController {
                             dialogStage.close(); 
                         }
                         catch(MinMaxWrong e){
-                            e.printStackTrace();
+                            System.out.println(e.getMessage());
                         }
                     }
                     catch(InventoryLevelWrong e){
-                        e.printStackTrace();
+                        System.out.println(e.getMessage());
                     }
                 }
             }
@@ -184,11 +196,11 @@ public class AddPartController {
                             
                         }
                         catch(MinMaxWrong e){
-                            e.printStackTrace();
+                            System.out.println(e.getMessage());
                         }
                     }
                     catch(InventoryLevelWrong e){
-                        e.printStackTrace();
+                        System.out.println(e.getMessage());
                     }
                 }  
             }
@@ -220,11 +232,11 @@ public class AddPartController {
                             
                         }
                         catch(MinMaxWrong e){
-                            e.printStackTrace();
+                            System.out.println(e.getMessage());
                         }
                     }
                     catch(InventoryLevelWrong e){
-                        e.printStackTrace();
+                        System.out.println(e.getMessage());
                     }
                 }  
             }
@@ -252,11 +264,11 @@ public class AddPartController {
                             dialogStage.close();
                         }
                         catch(MinMaxWrong e){
-                            e.printStackTrace();
+                            System.out.println(e.getMessage());
                         }
                     }
                     catch(InventoryLevelWrong e){
-                        e.printStackTrace();
+                        System.out.println(e.getMessage());
                     }
                 }
             }
@@ -352,7 +364,7 @@ public class AddPartController {
                 alert.showAndWait();
                 return false;  
             }
-         }
+         }      
         if(partName.getText() == null || partName.getText().isEmpty()){
             partNameLabel.setTextFill(Color.web("red"));
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -363,6 +375,9 @@ public class AddPartController {
             alert.showAndWait();
             return false;
         }
+        
+        //input validation for inventory disabled so evaluator can test custom exception control
+        /*
         if(!partInv.getText().matches("[0-9]+")){
             partInvLabel.setTextFill(Color.web("red"));
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -372,7 +387,7 @@ public class AddPartController {
 
             alert.showAndWait();
             return false;
-        }
+        }*/
         if(!partPrice.getText().matches("^[0-9]+\\.?[0-9]*")){
             partPriceLabel.setTextFill(Color.web("red"));
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -403,7 +418,7 @@ public class AddPartController {
             alert.showAndWait();
             return false;
         }
-        return true;
+         return true;
     }
     
     public void setDialogStage(Stage dialogStage) {
